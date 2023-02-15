@@ -1,15 +1,15 @@
-all: main clean
 CC = gcc
 CFLAGS  = -c -Wall -Wshadow -g
 DEP = main.o listcreat.o
+all: main clean
 
-
-listcreat.o: listcreat.c listcreat.h
-	$(CC) $(CFLAGS) listcreat.c
 
 main: $(DEP)
-	$(CC) $(CFLAGS) $@.c
 	$(CC) -g -o $@ $^
 
+%.o: %.c listcreat.h
+	$(CC) $(CFLAGS) $<
+
+.PHONY: clean
 clean:
-	rm -f *.o all
+	rm -f *.o 

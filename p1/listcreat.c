@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "listcreat.h"
 
-
+struct
 // Print all the characteristics of the creature.
 void
 print_creat(struct Creat Creat) {
