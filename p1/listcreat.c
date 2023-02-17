@@ -2,31 +2,42 @@
 #include <stdlib.h>
 #include "listcreat.h"
 
-struct
 // Print all the characteristics of the creature.
 void
-print_creat(struct Creat Creat) {
+print_creat(Creat* creat) {
 
-    printf("ID: %Ld\n", Creat.id);
-    printf("SPECIE: %s\n", Creat.specie);
-    printf("HEIGHT: %d\n", Creat.height);
-    printf("WEIGHT: %d\n", Creat.weight);
-    printf("COLOR: %s\n", Creat.color);
+    printf("ID: %Ld\n", creat->id);
+    printf("SPECIE: %s\n", creat->specie);
+    printf("HEIGHT: %d\n", creat->height);
+    printf("WEIGHT: %d\n", creat->weight);
+    printf("COLOR: %s\n", creat->color);
 }
 
 // All methods for the List
 
-struct Creat*
-create_list() {
-    struct Creat* creat_list;
-    creat_list = NULL;
-    return creat_list;
+List*
+create_list(void) {
+    List* creatures;
+    creatures = malloc(sizeof(List));
+    creatures->n_creatures = 0;
+    return creatures;
 }
 
 int
-is_empty(struct Creat* list) {
-    if (list == NULL)
-        return 0;
-    else
+is_empty(List* list) {
+
+    if (list->n_creatures == 0)
         return 1;
+    else
+        return 0;
+}
+
+void
+add_creature_top (Creat* creat, List* list) {
+
+    Creat* aux;
+    if (list->n_creatures == 0) {
+        list->first = malloc(sizeof(Creat));
+        list->first = creat;
+    }
 }
