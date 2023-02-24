@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "listcreat.h"
+
 
 // Print all the characteristics of the creature.
 void
@@ -32,12 +34,24 @@ is_empty(List* list) {
         return 0;
 }
 
+
+void
+copy_elements (Creat* src, Creat* dest) {
+    dest->id = src->id;
+    dest->color = src->color;
+    dest->specie = src->specie;
+    dest->height = src->height;
+    dest->weight = src->weight;
+}
+
 void
 add_creature_top (Creat* creat, List* list) {
-
-    Creat* aux;
     if (list->n_creatures == 0) {
-        list->first = malloc(sizeof(Creat));
-        list->first = creat;
+        list->first = malloc (sizeof(Creat));
+        list->last = malloc (sizeof(Creat));
     }
+    copy_elements(creat, list->first);
+    
+
+    list->n_creatures++;
 }
