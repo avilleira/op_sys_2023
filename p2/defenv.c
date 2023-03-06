@@ -53,7 +53,6 @@ son_behavior( int argc, char **args) {
             break;
         }
     }
-
     filename = strrchr(args[i], '/');
 }
 
