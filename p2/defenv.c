@@ -12,6 +12,13 @@ usage(void) {
     exit(EXIT_FAILURE);
 }
 
+void
+son_behavior( int argc, char **args) {
+    int i;
+    for (i = 1; i < argc; i++) {
+        //AQUI VA LO DEL STRCHR
+    }
+}
 
 int
 main (int argc, char *argv[]) {
@@ -24,7 +31,7 @@ main (int argc, char *argv[]) {
     case -1:
         errx(EXIT_FAILURE, "fork failed!");
     case 0:
-        execl("/bin/ls", "ls", NULL);
+        son_behavior(argc, argv);
         break;
     default:
         printf("I am the parent\n");
