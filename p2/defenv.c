@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include <stdlib.h>
 #include <string.h>
 #include <err.h>
+
 
 
 void
@@ -12,12 +13,48 @@ usage(void) {
     exit(EXIT_FAILURE);
 }
 
+
+char *
+get_var (char *str, char del) {
+    char *var;
+    int index;
+
+    var = malloc(sizeof(char*));
+    strcpy(var, str);
+
+    for (index = 0; index < strlen(var); index++) {
+        if (var[index] == del) {
+            var[index] = '\0';
+            break;
+        }
+    }
+    return var;
+}
+
+
 void
 son_behavior( int argc, char **args) {
     int i;
+    char wanted_char, *var, *value, *filename;
+    
+    wanted_char = '=';
+
     for (i = 1; i < argc; i++) {
-        //AQUI VA LO DEL STRCHR
+        if ((value = strchr(args[i], wanted_char)) != NULL){
+            value = value+1;
+            var = get_var(args[i], '=');
+            if (setenv(var, value, 1) != 0) {
+                warnx("setenv has failed. %s has not been set.", var);
+            }
+            free(var);
+        }
+        else {
+            fprintf(stderr, "No más variables\n");
+            break;
+        }
     }
+
+    filename = strrchr(args[i], '/');
 }
 
 int
