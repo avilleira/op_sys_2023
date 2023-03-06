@@ -35,7 +35,7 @@ get_var (char *str, char del) {
 void
 son_behavior( int argc, char **args) {
     int i;
-    char wanted_char, *var, *value, *filename;
+    char wanted_char, *var, *value, *exec_args;
     
     wanted_char = '=';
 
@@ -53,7 +53,8 @@ son_behavior( int argc, char **args) {
             break;
         }
     }
-    filename = strrchr(args[i], '/');
+    char *tira[] = {"/bin/ls", 0};
+    execv("/bin/ls", tira);
 }
 
 int
