@@ -7,6 +7,9 @@
 #include <string.h>
 #include <err.h>
 
+// Author: Jaime Avilleira García
+// File: copybytes.c
+
 enum {
 	MAX_LECTURE = 100
 };
@@ -51,7 +54,7 @@ read_write(char *orig, char *dest, int bytes)
 			err(EXIT_FAILURE, "open failed.");
 	}
 
-	if (bytes < 0) {
+	if (bytes < 0) {	// Full read and write from a file
 		while ((nr = read(fd_orig, buffer, MAX_LECTURE)) != 0) {
 			if (nr < 0)
 				err(EXIT_FAILURE, "read failed.");
