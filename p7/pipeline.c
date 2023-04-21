@@ -7,36 +7,34 @@
 #include <unistd.h>
 
 enum {
-    MAX_LINE = 1024,
-    MAX_ARGS = 100,
-    PATHS = 2,
-    MAX_PIPES = 2,
+	MAX_LINE = 1024,
+	MAX_ARGS = 100,
+	PATHS = 2,
+	MAX_PIPES = 2,
 };
-
 
 void
 usage(void)
 {
-    fprintf(stderr, "usage: ./pippeline 'COMMAND' 'COMMAND' 'COMMAND'\n");
-    exit(EXIT_FAILURE);
+	fprintf(stderr, "usage: ./pippeline 'COMMAND' 'COMMAND' 'COMMAND'\n");
+	exit(EXIT_FAILURE);
 }
-
 
 void
-set_arguments(char *cmd_line, char **args) {
+set_arguments(char *cmd_line, char **args)
+{
 
-    int index;
-    char *token;
+	int index;
+	char *token;
 
-    index = 0;
-    while((token = strtok_r(cmd_line, " ", &cmd_line)) != NULL) {
-        args[index] = token;
-        index++;
-    }
-    args[index++] = 0;
+	index = 0;
+	while ((token = strtok_r(cmd_line, " ", &cmd_line)) != NULL) {
+		args[index] = token;
+		index++;
+	}
+	args[index++] = 0;
 
 }
-
 
 void
 exec_path(char **args)
@@ -58,87 +56,84 @@ exec_path(char **args)
 void
 exec_cmd(char *cmd_line)
 {
-    char *args[MAX_ARGS];
+	char *args[MAX_ARGS];
 
-    set_arguments(cmd_line, args);
-    exec_path(args);
+	set_arguments(cmd_line, args);
+	exec_path(args);
 }
 
-
 int
-main (int argc, char *argv[])
+main(int argc, char *argv[])
 {
-    int fd[MAX_PIPES][2], index_cmd, pid, i, sts;
+	int fd[MAX_PIPES][2], index_cmd, pid, i, sts;
 
-    if (argc != 4)
-        usage();
+	if (argc != 4)
+		usage();
 
-    index_cmd = 0;
-    for (i = 1; i < argc; i++) {
-        
-        if (index_cmd < MAX_PIPES) {
-            if (pipe(fd[index_cmd]) < 0)
-                err(EXIT_FAILURE, "cannot make a pipe");
-        }
+	index_cmd = 0;
+	for (i = 1; i < argc; i++) {
 
-        switch ((pid = fork())) {
-        case -1:
-            err(EXIT_FAILURE, "fork failed");
-        case 0:
-            if (index_cmd == 0) {
-                close(fd[index_cmd][0]);
-                close(fd[index_cmd+1][0]);
-                close(fd[index_cmd+1][1]);
+		if (index_cmd < MAX_PIPES) {
+			if (pipe(fd[index_cmd]) < 0)
+				err(EXIT_FAILURE, "cannot make a pipe");
+		}
 
-                if (dup2(fd[index_cmd][1], 1) < 0)
-                    err (EXIT_FAILURE, "dup failed");
-                close(fd[index_cmd][1]);
+		switch ((pid = fork())) {
+		case -1:
+			err(EXIT_FAILURE, "fork failed");
+		case 0:
+			if (index_cmd == 0) {
+				close(fd[index_cmd][0]);
+				close(fd[index_cmd + 1][0]);
+				close(fd[index_cmd + 1][1]);
 
-                exec_cmd(argv[i]);
-            }
-            else if (index_cmd == MAX_PIPES) {
+				if (dup2(fd[index_cmd][1], 1) < 0)
+					err(EXIT_FAILURE, "dup failed");
+				close(fd[index_cmd][1]);
 
-                close(fd[index_cmd-1][1]);
-                close(fd[index_cmd-2][0]);
-                close(fd[index_cmd-2][1]);
+				exec_cmd(argv[i]);
+			} else if (index_cmd == MAX_PIPES) {
 
-                if (dup2(fd[index_cmd-1][0], 0) < 0)
-                    err (EXIT_FAILURE, "dup failed");
+				close(fd[index_cmd - 1][1]);
+				close(fd[index_cmd - 2][0]);
+				close(fd[index_cmd - 2][1]);
 
-                close(fd[index_cmd-1][0]);
+				if (dup2(fd[index_cmd - 1][0], 0) < 0)
+					err(EXIT_FAILURE, "dup failed");
 
-                exec_cmd(argv[i]);
-            }
-            else {
+				close(fd[index_cmd - 1][0]);
 
-                close(fd[index_cmd-1][1]);
-                close(fd[index_cmd][0]);
+				exec_cmd(argv[i]);
+			} else {
 
-                if (dup2(fd[index_cmd-1][0], 0) < 0)
-                    err(EXIT_FAILURE, "dup failed");
+				close(fd[index_cmd - 1][1]);
+				close(fd[index_cmd][0]);
 
-                if (dup2(fd[index_cmd][1], 1) < 0)
-                    err(EXIT_FAILURE, "dup failed");
+				if (dup2(fd[index_cmd - 1][0], 0) < 0)
+					err(EXIT_FAILURE, "dup failed");
 
-                close(fd[index_cmd-1][0]);
-                close(fd[index_cmd][1]);
+				if (dup2(fd[index_cmd][1], 1) < 0)
+					err(EXIT_FAILURE, "dup failed");
 
-                exec_cmd(argv[i]);
-            }     
+				close(fd[index_cmd - 1][0]);
+				close(fd[index_cmd][1]);
 
-            break;
-        default:
+				exec_cmd(argv[i]);
+			}
 
-            break;
-        }
+			break;
+		default:
 
-        index_cmd++;
-    }
+			break;
+		}
 
-    while ((pid = wait(&sts)) != -1) {
-		if (WIFEXITED(sts))
-		    return (WEXITSTATUS(sts));
+		index_cmd++;
 	}
 
-    return EXIT_SUCCESS;
+	while ((pid = wait(&sts)) != -1) {
+		if (WIFEXITED(sts))
+			return (WEXITSTATUS(sts));
+	}
+
+	return EXIT_SUCCESS;
 }
