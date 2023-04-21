@@ -43,7 +43,7 @@ exec_path(char **args)
 {
 
 	int i;
-	char cmd[MAX_LINE], *paths[PATHS] = { "/bin/", "/usr/bin" };
+	char cmd[MAX_LINE], *paths[PATHS] = { "/bin/", "/usr/bin/" };
 
 	// Considering the order of paths in order to execute the commands.
 	for (i = 0; i < PATHS; i++) {
@@ -87,6 +87,8 @@ main (int argc, char *argv[])
         case 0:
             if (index_cmd == 0) {
                 close(fd[index_cmd][0]);
+                close(fd[index_cmd+1][0]);
+                close(fd[index_cmd+1][1]);
 
                 if (dup2(fd[index_cmd][1], 1) < 0)
                     err (EXIT_FAILURE, "dup failed");
@@ -97,6 +99,8 @@ main (int argc, char *argv[])
             else if (index_cmd == MAX_PIPES) {
 
                 close(fd[index_cmd-1][1]);
+                close(fd[index_cmd-2][0]);
+                close(fd[index_cmd-2][1]);
 
                 if (dup2(fd[index_cmd-1][0], 0) < 0)
                     err (EXIT_FAILURE, "dup failed");
