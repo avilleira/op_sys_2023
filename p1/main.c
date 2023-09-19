@@ -30,6 +30,12 @@ main(int argc, char *argv[])
 	List *creature_list;
 
 	creature_list = create_list();
-	add_creature_top(&creatures[0], creature_list);
+	add_creature_end(&creatures[0], creature_list);
+	print_creat(creature_list->last);
+	add_creature_end(&creatures[1], creature_list);
+	add_creature_end(&creatures[2], creature_list);
+	print_first(creature_list);
+	print_last(creature_list);
+	del_list(creature_list);
 	exit(EXIT_SUCCESS);
 }
